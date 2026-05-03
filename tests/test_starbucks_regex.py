@@ -101,3 +101,25 @@ def test_extract_drink_order():
     # 該当なしの場合
     text4 = "今日は家で麦茶を飲んでいます"
     assert extract_drink_order(text4) is None
+
+@pytest.mark.parametrize("order_str", [
+    # 空文字・空白
+    "",
+    " ",
+    "   ",
+    # 無関係な文字列
+    "こんにちは",
+    "今日の天気は晴れです",
+    # 不完全な注文 (単体ではマッチしない要素のみ)
+    "トール",
+    "ベンティ",
+    "豆乳変更",
+    "ディカフェ",
+    "ホット",
+    "アイス",
+    "エクストラホット",
+    "エクストラホイップ",
+])
+def test_extract_drink_order_invalid(order_str):
+    """異常系のテスト：注文として不完全、または無関係な文字列から抽出できないことを確認"""
+    assert extract_drink_order(order_str) is None
