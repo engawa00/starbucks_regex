@@ -1,0 +1,38 @@
+import re
+
+# 日本のスターバックスのレギュラードリンクメニュー（カスタマイズ含む）にマッチする正規表現
+# ※プロジェクト名と整合性を取るため、定数名を STARBUCKS_JP_DRINK_MENU_REGEX としています。
+STARBUCKS_JP_DRINK_MENU_REGEX = r"(?i)(ショート|トール|グランデ|ベンティ)?\s?(ディカフェ|デカフェ|リストレット)?\s?((?:ライト|エクストラ|ノン)?\s?(?:ホイップ|豆乳|アーモンド\s?ミルク|オーツ\s?ミルク|ミルク|バニラ\s?シロップ|キャラメル\s?シロップ|チョコレート\s?シロップ|ホワイト\s?モカ\s?シロップ|タゾ\s?チャイ\s?シロップ|アーモンド\s?トフィー\s?シロップ|クラシック\s?シロップ|シロップ|ソース|キャラメル\s?ソース|チョコ\s?ソース|チョコ\s?チップ|シトラス\s?果肉|氷|ライト\s?アイス|エクストラ\s?アイス|ノン\s?アイス)\s?(?:追加|変更|抜き|多め|少なめ)?\s?)*\s?(?:(スターバックス\s?ラテ|キャラメル\s?マキアート|ドリップ\s?コーヒー|カフェ\s?モカ|ホワイト\s?モカ|(?:抹茶|ほうじ茶|チャイ|アール\s?グレイ|カモミール|ゼン\s?クラウド\s?ウーロン|イングリッシュ\s?ブレックファスト|さくら)\s?ティー\s?ラテ)\s?(ホット|アイス|エクストラホット)?|((?:コーヒー|エスプレッソ\s?アフォガート|キャラメル|ダーク\s?モカ\s?チップ(?:\s?クリーム)?|抹茶\s?クリーム|バニラ\s?クリーム|マンゴー\s?パッション\s?ティー|メロン\s?オブ\s?メロン|GOHOBI\s?メロン|ストロベリー|瀬戸内\s?レモン\s?ケーキ|さくら)\s?フラペチーノ)\s?(アイス)?|(カプチーノ)\s?(ホット|エクストラホット)?)"
+
+_compiled_regex = re.compile(STARBUCKS_JP_DRINK_MENU_REGEX)
+
+def match_drink_order(order_str: str) -> bool:
+    """
+    指定された注文文字列が、日本のスターバックスのドリンクメニュー（カスタマイズ含む）として
+    全体が完全にマッチするかどうかを判定します。
+
+    Args:
+        order_str (str): 判定する注文文字列
+
+    Returns:
+        bool: 完全にマッチすれば True、そうでなければ False
+    """
+    order_str = order_str.strip()
+    match = _compiled_regex.fullmatch(order_str)
+    return match is not None
+
+def extract_drink_order(order_str: str) -> str | None:
+    """
+    指定された文字列からスターバックスの注文部分を抽出します。
+    部分一致で検索します。
+
+    Args:
+        order_str (str): 検索対象の文字列
+
+    Returns:
+        str | None: マッチした部分文字列。見つからない場合は None
+    """
+    match = _compiled_regex.search(order_str)
+    if match:
+        return match.group(0).strip()
+    return None
