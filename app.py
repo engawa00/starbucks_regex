@@ -40,11 +40,11 @@ class StarbucksRegexApp:
 
         result_text = f"入力文字列: {order_str}\n\n"
         if is_full_match:
-            result_text += "判定: 🟢 注文として完全にマッチしました！\n"
+            result_text += "判定: 〇 注文として完全にマッチしました！\n"
         elif extracted:
-            result_text += f"判定: 🟡 部分的にマッチしました。\n抽出された注文: {extracted}\n"
+            result_text += f"判定: △ 部分的にマッチしました。\n抽出された注文: {extracted}\n"
         else:
-            result_text += "判定: 🔴 マッチしませんでした。\n"
+            result_text += "判定: ✕ マッチしませんでした。\n"
 
         # 正規表現のグループ詳細を表示
         match = _compiled_regex.search(order_str)
