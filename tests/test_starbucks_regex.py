@@ -109,6 +109,18 @@ def test_invalid_orders_fullmatch(order):
     """異常系のテスト：メニューにない注文は完全マッチしないことを確認"""
     assert match_drink_order(order) is False
 
+@pytest.mark.parametrize("order", [
+    "",
+    " ",
+    "   ",
+    "\n",
+    "\t",
+    " \n \t ",
+])
+def test_match_drink_order_empty_inputs(order):
+    """異常系のテスト：空文字や空白のみの入力に対して完全にマッチしないことを確認"""
+    assert match_drink_order(order) is False
+
 def test_extract_drink_order():
     """部分一致の抽出テスト"""
     # 注文の後に余計な文字がある場合
