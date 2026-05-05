@@ -1,6 +1,15 @@
 import pytest
 from starbucks_regex import match_drink_order, extract_drink_order
 
+SEASONAL_DRINKS = [
+    "メロン オブ メロン フラペチーノ",
+    "GOHOBI メロン フラペチーノ",
+    "ストロベリー フラペチーノ",
+    "瀬戸内 レモン ケーキ フラペチーノ",
+    "さくら ティー ラテ",
+    "さくら フラペチーノ",
+]
+
 @pytest.mark.parametrize("order", [
     # 基本のドリンク (スペースあり・なし)
     "スターバックス ラテ",
@@ -110,16 +119,9 @@ def test_valid_orders(order):
     "ブリュー コーヒー ホット",
     "ブリュー コーヒー アイス",
 
-    # 期間限定メニュー
-    "メロン オブ メロン フラペチーノ",
-    "GOHOBI メロン フラペチーノ",
-    "ストロベリー フラペチーノ",
-    "瀬戸内 レモン ケーキ フラペチーノ",
-    "さくら ティー ラテ",
-    "さくら フラペチーノ",
     # 空文字
     "",
-])
+] + SEASONAL_DRINKS)
 def test_invalid_orders_fullmatch(order):
     """異常系のテスト：メニューにない注文は完全マッチしないことを確認"""
     assert match_drink_order(order) is False
@@ -150,14 +152,7 @@ def test_extract_drink_order():
     text4 = "今日は家で麦茶を飲んでいます"
     assert extract_drink_order(text4) is None
 
-@pytest.mark.parametrize("order_str", [
-    # 期間限定メニュー
-    "メロン オブ メロン フラペチーノ",
-    "GOHOBI メロン フラペチーノ",
-    "ストロベリー フラペチーノ",
-    "瀬戸内 レモン ケーキ フラペチーノ",
-    "さくら ティー ラテ",
-    "さくら フラペチーノ",
+@pytest.mark.parametrize("order_str", SEASONAL_DRINKS + [
     # 空文字・空白
     "",
     " ",
