@@ -108,7 +108,6 @@ pip install pytest
 
 ## 使い方
 
-### 1. GUIモード (判定アプリの起動)
 同梱の `app.py` を実行することで、GUIアプリが起動します。
 
 ```bash
@@ -117,25 +116,34 @@ python app.py
 
 起動後、テキストボックスに注文文字列（例: `トール エクストラホイップ ダークモカチップフラペチーノ`）を入力して「判定する」ボタンを押すと、マッチ結果とグループ分けの詳細が表示されます。
 
-### 2. Pythonスクリプトからの利用 (CLI / モジュール利用)
+## 開発者向け
+
+### Pythonスクリプトからの利用 (CLI / モジュール利用)
 `starbucks_regex.py` をインポートして、独自のスクリプトから利用できます。
 
 ```python
-from starbucks_regex import STARBUCKS_JP_DRINK_MENU_REGEX, match_drink_order, extract_drink_order
+from starbucks_regex import match_drink_order, extract_drink_order, get_drink_order_match
 
 order = "グランデ オーツミルク変更 キャラメル マキアート エクストラホット"
 
-# 完全一致するか判定
+# 1. 完全一致するか判定
 if match_drink_order(order):
     print("注文として妥当です！")
 
-# 文章の中から注文部分を抽出
+# 2. 文章の中から注文部分を抽出
 text = "今日のランチは トール スターバックス ラテ ホット を飲みました"
 drink = extract_drink_order(text)
 print(f"注文内容: {drink}")
+
+# 3. 正規表現のグループ詳細を取得 (re.Match オブジェクトの取得)
+# カプセル化を維持するため、内部でコンパイル済みの正規表現を呼び出す公開関数を使用します。
+match = get_drink_order_match(order)
+if match:
+    # 抽出されたサイズ（グループ1）などを取得できます
+    print(f"サイズ: {match.group(1)}")
 ```
 
-## 開発者向け
+> **補足**: `STARBUCKS_JP_DRINK_MENU_REGEX` 定数をインポートして `re.compile(STARBUCKS_JP_DRINK_MENU_REGEX)` のように独自にコンパイルして使用することも可能ですが、実行時に正規表現コンパイルのオーバーヘッドが生じます。そのため、`get_drink_order_match` 等の関数を通じてモジュール内部でコンパイルされたものを再利用することを推奨します。
 
 ### テストの実行
 正規表現の変更や機能追加を行った場合は、`pytest` を用いてテストを実行し、既存のパターンが壊れていないか確認してください。
