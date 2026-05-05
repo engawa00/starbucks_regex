@@ -52,9 +52,9 @@ def test_evaluate_order_partial_match(app):
     assert "グループ 1: トール" in result_text
 
 def test_evaluate_order_no_match(app):
-    """異常系：マッチしない注文のテスト"""
+    """異常系：マッチしない注文のテスト（惜しいがマッチしないケース）"""
     app.entry.delete(0, tk.END)
-    app.entry.insert(0, "コーンスープ")
+    app.entry.insert(0, "メロン オブ メロン フラペチーノ")
     app.evaluate_order()
 
     result_text = app.result_label.cget("text")
