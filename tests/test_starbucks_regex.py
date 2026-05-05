@@ -178,3 +178,15 @@ def test_extract_drink_order():
 def test_extract_drink_order_invalid(order_str):
     """異常系のテスト：注文として不完全、または無関係な文字列から抽出できないことを確認"""
     assert extract_drink_order(order_str) is None
+
+def test_invalid_types():
+    """異常系のテスト：文字列以外の入力に対する例外送出を確認"""
+    with pytest.raises(AttributeError):
+        match_drink_order(None)
+    with pytest.raises(AttributeError):
+        match_drink_order(123)
+
+    with pytest.raises(TypeError):
+        extract_drink_order(None)
+    with pytest.raises(TypeError):
+        extract_drink_order(123)
