@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from starbucks_regex import match_drink_order, extract_drink_order, _compiled_regex
+from starbucks_regex import match_drink_order, extract_drink_order, get_drink_order_match
 
 class StarbucksRegexApp:
     def __init__(self, root):
@@ -46,7 +46,7 @@ class StarbucksRegexApp:
             result_parts.append("判定: ✕ マッチしませんでした。\n")
 
         # 正規表現のグループ詳細を表示
-        match = _compiled_regex.search(order_str)
+        match = get_drink_order_match(order_str)
         if match:
             result_parts.append("\n--- マッチ詳細 ---\n")
             # 全てのグループを取得して、Noneでないものを表示

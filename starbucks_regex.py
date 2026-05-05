@@ -98,3 +98,15 @@ def extract_drink_order(order_str: str) -> str | None:
     if match:
         return match.group(0).strip()
     return None
+
+def get_drink_order_match(order_str: str) -> re.Match | None:
+    """
+    指定された文字列からスターバックスの注文部分の Match オブジェクトを取得します。
+
+    Args:
+        order_str (str): 検索対象の文字列
+
+    Returns:
+        re.Match | None: マッチした場合は Match オブジェクト、見つからない場合は None
+    """
+    return _compiled_regex.search(order_str)
