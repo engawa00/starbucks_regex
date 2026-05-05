@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
-from starbucks_regex import STARBUCKS_JP_DRINK_MENU_REGEX, match_drink_order, extract_drink_order, _compiled_regex
-import re
+from starbucks_regex import match_drink_order, extract_drink_order, _compiled_regex
 
 class StarbucksRegexApp:
     def __init__(self, root):
