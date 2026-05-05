@@ -38,24 +38,24 @@ class StarbucksRegexApp:
         is_full_match = match_drink_order(order_str)
         extracted = extract_drink_order(order_str)
 
-        result_text = f"入力文字列: {order_str}\n\n"
+        result_parts = [f"入力文字列: {order_str}\n\n"]
         if is_full_match:
-            result_text += "判定: 〇 注文として完全にマッチしました！\n"
+            result_parts.append("判定: 〇 注文として完全にマッチしました！\n")
         elif extracted:
-            result_text += f"判定: △ 部分的にマッチしました。\n抽出された注文: {extracted}\n"
+            result_parts.append(f"判定: △ 部分的にマッチしました。\n抽出された注文: {extracted}\n")
         else:
-            result_text += "判定: ✕ マッチしませんでした。\n"
+            result_parts.append("判定: ✕ マッチしませんでした。\n")
 
         # 正規表現のグループ詳細を表示
         match = _compiled_regex.search(order_str)
         if match:
-            result_text += "\n--- マッチ詳細 ---\n"
+            result_parts.append("\n--- マッチ詳細 ---\n")
             # 全てのグループを取得して、Noneでないものを表示
             for i, group in enumerate(match.groups(), start=1):
                 if group:
-                    result_text += f"グループ {i}: {group.strip()}\n"
+                    result_parts.append(f"グループ {i}: {group.strip()}\n")
 
-        self.result_label.config(text=result_text)
+        self.result_label.config(text="".join(result_parts))
 
 if __name__ == "__main__":
     root = tk.Tk()
