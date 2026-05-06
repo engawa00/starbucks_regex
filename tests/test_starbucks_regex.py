@@ -1,5 +1,6 @@
+import re
 import pytest
-from starbucks_regex import match_drink_order, extract_drink_order
+from starbucks_regex import match_drink_order, extract_drink_order, get_drink_order_match
 
 SEASONAL_DRINKS = [
     "メロン オブ メロン フラペチーノ",
@@ -174,6 +175,29 @@ def test_extract_drink_order_invalid(order_str):
     """異常系のテスト：注文として不完全、または無関係な文字列から抽出できないことを確認"""
     assert extract_drink_order(order_str) is None
 
+def test_get_drink_order_match():
+    """get_drink_order_match の正常系テスト"""
+    # 正常な注文
+    order = "トール スターバックス ラテ ホット"
+    match = get_drink_order_match(order)
+    assert isinstance(match, re.Match)
+    assert match.group(0) == order
+
+    # 部分一致
+    text = "私は グランデ カフェ モカ アイス を注文しました"
+    match = get_drink_order_match(text)
+    assert isinstance(match, re.Match)
+    assert match.group(0) == "グランデ カフェ モカ アイス"
+
+@pytest.mark.parametrize("order_str", SEASONAL_DRINKS + [
+    "こんにちは",
+    "トール",
+    "",
+])
+def test_get_drink_order_match_invalid(order_str):
+    """get_drink_order_match の異常系テスト"""
+    assert get_drink_order_match(order_str) is None
+
 def test_invalid_types():
     """異常系のテスト：文字列以外の入力に対する例外送出を確認"""
     with pytest.raises(AttributeError):
@@ -185,3 +209,8 @@ def test_invalid_types():
         extract_drink_order(None)
     with pytest.raises(TypeError):
         extract_drink_order(123)
+
+    with pytest.raises(TypeError):
+        get_drink_order_match(None)
+    with pytest.raises(TypeError):
+        get_drink_order_match(123)
