@@ -115,13 +115,33 @@ def get_drink_order_match(order_str: str) -> re.Match | None:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Starbucks(JP) Drink Menu Regex Checker CLI")
-    parser.add_argument("order", type=str, nargs="?", help="判定する注文文字列 (例: 'トール エクストラホイップ ダークモカチップフラペチーノ')")
+    parser = argparse.ArgumentParser(
+        description="Starbucks(JP) Drink Menu Regex Checker CLI",
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    examples = [
+        "トール エクストラホイップ ダークモカチップフラペチーノ",
+        "ショート キャラメルシロップ ホイップ カフェミスト",
+        "ショート リストレット バニラシロップ スターバックスラテ",
+        "アイス トール エスプレッソショット追加 キャラメルマキアート",
+        "アイス トール ライトシロップ ライトソース キャラメルマキアート",
+        "ホット グランデ チャイ ティー ラテ"
+    ]
+    examples_str = "\n".join(f"  '{ex}'" for ex in examples)
+
+    parser.add_argument(
+        "order",
+        type=str,
+        nargs="?",
+        help=f"判定する注文文字列\n例:\n{examples_str}"
+    )
     args = parser.parse_args()
 
     if not args.order:
         print("注文内容を入力してください。")
-        print("使用例: python starbucks_regex.py 'トール エクストラホイップ ダークモカチップフラペチーノ'")
+        print("使用例:")
+        for ex in examples:
+            print(f"  python starbucks_regex.py '{ex}'")
         sys.exit(1)
 
     order_str = args.order.strip()
