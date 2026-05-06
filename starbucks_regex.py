@@ -1,4 +1,6 @@
 import re
+import argparse
+import sys
 
 # 日本のスターバックスのレギュラードリンクメニュー（カスタマイズ含む）にマッチする正規表現
 # ※プロジェクト名と整合性を取るため、定数名を STARBUCKS_JP_DRINK_MENU_REGEX としています。
@@ -110,3 +112,39 @@ def get_drink_order_match(order_str: str) -> re.Match | None:
         re.Match | None: マッチした場合は Match オブジェクト、見つからない場合は None
     """
     return _compiled_regex.search(order_str)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Starbucks(JP) Drink Menu Regex Checker CLI")
+    parser.add_argument("order", type=str, nargs="?", help="判定する注文文字列 (例: 'トール エクストラホイップ ダークモカチップフラペチーノ')")
+    args = parser.parse_args()
+
+    if not args.order:
+        print("注文内容を入力してください。")
+        print("使用例: python starbucks_regex.py 'トール エクストラホイップ ダークモカチップフラペチーノ'")
+        sys.exit(1)
+
+    order_str = args.order.strip()
+    match = get_drink_order_match(order_str)
+
+    print(f"入力文字列: {order_str}")
+    print()
+
+    if match:
+        extracted = match.group(0).strip()
+        if extracted == order_str:
+            print("判定: 〇 注文として完全にマッチしました！")
+        else:
+            print("判定: △ 部分的にマッチしました。")
+            print(f"抽出された注文: {extracted}")
+
+        print()
+        print("--- マッチ詳細 ---")
+        for i, group in enumerate(match.groups(), start=1):
+            if group:
+                print(f"グループ {i}: {group.strip()}")
+    else:
+        print("判定: ✕ マッチしませんでした。")
+
+if __name__ == "__main__":
+    main()

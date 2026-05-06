@@ -214,3 +214,50 @@ def test_invalid_types():
         get_drink_order_match(None)
     with pytest.raises(TypeError):
         get_drink_order_match(123)
+
+def test_cli_full_match(capsys, monkeypatch):
+    """CLIの正常系のテスト（完全一致）"""
+    import starbucks_regex
+    monkeypatch.setattr("sys.argv", ["starbucks_regex.py", "トール エクストラホイップ ダークモカチップフラペチーノ"])
+
+    starbucks_regex.main()
+
+    captured = capsys.readouterr()
+    assert "入力文字列: トール エクストラホイップ ダークモカチップフラペチーノ" in captured.out
+    assert "判定: 〇 注文として完全にマッチしました！" in captured.out
+    assert "グループ 1: トール" in captured.out
+    assert "グループ 6: ダークモカチップフラペチーノ" in captured.out
+
+def test_cli_partial_match(capsys, monkeypatch):
+    """CLIの正常系のテスト（部分一致）"""
+    import starbucks_regex
+    monkeypatch.setattr("sys.argv", ["starbucks_regex.py", "美味しい トール エクストラホイップ ダークモカチップフラペチーノ をください"])
+
+    starbucks_regex.main()
+
+    captured = capsys.readouterr()
+    assert "判定: △ 部分的にマッチしました。" in captured.out
+    assert "抽出された注文: トール エクストラホイップ ダークモカチップフラペチーノ" in captured.out
+
+def test_cli_no_match(capsys, monkeypatch):
+    """CLIの異常系のテスト（不一致）"""
+    import starbucks_regex
+    monkeypatch.setattr("sys.argv", ["starbucks_regex.py", "普通のコーヒー"])
+
+    starbucks_regex.main()
+
+    captured = capsys.readouterr()
+    assert "判定: ✕ マッチしませんでした。" in captured.out
+
+def test_cli_no_args(capsys, monkeypatch):
+    """CLIの異常系のテスト（引数なし）"""
+    import starbucks_regex
+    monkeypatch.setattr("sys.argv", ["starbucks_regex.py"])
+
+    with pytest.raises(SystemExit) as e:
+        starbucks_regex.main()
+
+    assert e.value.code == 1
+
+    captured = capsys.readouterr()
+    assert "注文内容を入力してください。" in captured.out
