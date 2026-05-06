@@ -21,6 +21,7 @@ class StarbucksRegexApp:
         self.entry = tk.Entry(frame, width=70, font=("Helvetica", 14))
         self.entry.pack(pady=10)
         self.entry.insert(0, "トール エクストラホイップ ダークモカチップフラペチーノ")
+        self.entry.bind("<Return>", self.evaluate_order)
 
         button = tk.Button(frame, text="判定する", command=self.evaluate_order, font=("Helvetica", 12, "bold"), bg="#00704A", fg="white", padx=10, pady=5)
         button.pack(pady=10)
@@ -28,7 +29,7 @@ class StarbucksRegexApp:
         self.result_label = tk.Label(frame, text="", justify=tk.LEFT, font=("Helvetica", 11), bg="#ffffff", anchor="nw", relief=tk.SOLID, bd=1, padx=10, pady=10)
         self.result_label.pack(expand=True, fill=tk.BOTH, pady=10)
 
-    def evaluate_order(self):
+    def evaluate_order(self, event=None):
         order_str = self.entry.get().strip()
         if not order_str:
             messagebox.showwarning("警告", "注文内容を入力してください。")
