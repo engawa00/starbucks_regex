@@ -34,25 +34,24 @@ class StarbucksRegexApp:
             messagebox.showwarning("警告", "注文内容を入力してください。")
             return
 
-        is_full_match = match_drink_order(order_str)
-        extracted = extract_drink_order(order_str)
+        # 正規表現の判定と詳細取得を一度に行う
+        match = get_drink_order_match(order_str)
 
         result_parts = [f"入力文字列: {order_str}\n\n"]
-        if is_full_match:
-            result_parts.append("判定: 〇 注文として完全にマッチしました！\n")
-        elif extracted:
-            result_parts.append(f"判定: △ 部分的にマッチしました。\n抽出された注文: {extracted}\n")
-        else:
-            result_parts.append("判定: ✕ マッチしませんでした。\n")
-
-        # 正規表現のグループ詳細を表示
-        match = get_drink_order_match(order_str)
         if match:
+            extracted = match.group(0).strip()
+            if extracted == order_str:
+                result_parts.append("判定: 〇 注文として完全にマッチしました！\n")
+            else:
+                result_parts.append(f"判定: △ 部分的にマッチしました。\n抽出された注文: {extracted}\n")
+
             result_parts.append("\n--- マッチ詳細 ---\n")
             # 全てのグループを取得して、Noneでないものを表示
             for i, group in enumerate(match.groups(), start=1):
                 if group:
                     result_parts.append(f"グループ {i}: {group.strip()}\n")
+        else:
+            result_parts.append("判定: ✕ マッチしませんでした。\n")
 
         self.result_label.config(text="".join(result_parts))
 
