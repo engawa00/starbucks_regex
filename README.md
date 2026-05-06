@@ -119,7 +119,15 @@ python app.py
 ## 開発者向け
 
 ### Pythonスクリプトからの利用 (CLI / モジュール利用)
-`starbucks_regex.py` をインポートして、独自のスクリプトから利用できます。
+
+本プロジェクトは、コマンドラインツール（CLI）として直接実行することも可能です。
+
+```bash
+python starbucks_regex.py "トール エクストラホイップ ダークモカチップフラペチーノ"
+```
+このコマンドを実行すると、GUIアプリと同等の判定結果やマッチ詳細が標準出力に表示されます。
+
+また、`starbucks_regex.py` をインポートして、独自のスクリプトから利用することもできます。
 
 ```python
 from starbucks_regex import match_drink_order, extract_drink_order, get_drink_order_match
