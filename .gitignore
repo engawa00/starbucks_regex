@@ -180,3 +180,4 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 starbucks_regex_*.zip
+docs/
