@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 from starbucks_regex import match_drink_order, extract_drink_order, get_drink_order_match
 
 class StarbucksRegexApp:
@@ -15,13 +15,23 @@ class StarbucksRegexApp:
         title_label = tk.Label(frame, text="☕ 日本のスターバックス 注文判定アプリ", font=("Helvetica", 16, "bold"), bg="#f2f0eb", fg="#00704a")
         title_label.pack(pady=(0, 20))
 
-        entry_label = tk.Label(frame, text="注文内容を入力 (例: トール エクストラホイップ ダークモカチップフラペチーノ):", font=("Helvetica", 10), bg="#f2f0eb")
+        entry_label = tk.Label(frame, text="注文内容を入力、またはリストから選択:", font=("Helvetica", 10), bg="#f2f0eb")
         entry_label.pack(anchor=tk.W)
 
-        self.entry = tk.Entry(frame, width=70, font=("Helvetica", 14))
+        examples = [
+            "トール エクストラホイップ ダークモカチップフラペチーノ",
+            "ショート キャラメルシロップ ホイップ カフェミスト",
+            "ショート リストレット バニラシロップ スターバックスラテ",
+            "エスプレッソショット追加 キャラメルマキアート",
+            "トール ライトシロップ ライトソース キャラメルマキアート アイス",
+            "グランデ チャイ ティー ラテ ホット"
+        ]
+
+        self.entry = ttk.Combobox(frame, values=examples, width=70, font=("Helvetica", 14))
         self.entry.pack(pady=10)
-        self.entry.insert(0, "トール エクストラホイップ ダークモカチップフラペチーノ")
+        self.entry.insert(0, examples[0])
         self.entry.bind("<Return>", self.evaluate_order)
+        self.entry.bind("<<ComboboxSelected>>", self.evaluate_order)
 
         button = tk.Button(frame, text="判定する", command=self.evaluate_order, font=("Helvetica", 12, "bold"), bg="#00704A", fg="white", padx=10, pady=5)
         button.pack(pady=10)
