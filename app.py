@@ -2,20 +2,26 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from starbucks_regex import match_drink_order, extract_drink_order, get_drink_order_match
 
+# UI Constants
+BG_COLOR = "#f2f0eb"
+PRIMARY_COLOR = "#00704a"
+WHITE = "#ffffff"
+FONT_FAMILY = "Helvetica"
+
 class StarbucksRegexApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Starbucks(JP) Drink Menu Regex Checker")
         self.root.geometry("600x450")
-        self.root.configure(bg="#f2f0eb")
+        self.root.configure(bg=BG_COLOR)
 
-        frame = tk.Frame(self.root, padx=20, pady=20, bg="#f2f0eb")
+        frame = tk.Frame(self.root, padx=20, pady=20, bg=BG_COLOR)
         frame.pack(expand=True, fill=tk.BOTH)
 
-        title_label = tk.Label(frame, text="☕ 日本のスターバックス 注文判定アプリ", font=("Helvetica", 16, "bold"), bg="#f2f0eb", fg="#00704a")
+        title_label = tk.Label(frame, text="☕ 日本のスターバックス 注文判定アプリ", font=(FONT_FAMILY, 16, "bold"), bg=BG_COLOR, fg=PRIMARY_COLOR)
         title_label.pack(pady=(0, 20))
 
-        entry_label = tk.Label(frame, text="注文内容を入力、またはリストから選択:", font=("Helvetica", 10), bg="#f2f0eb")
+        entry_label = tk.Label(frame, text="注文内容を入力、またはリストから選択:", font=(FONT_FAMILY, 10), bg=BG_COLOR)
         entry_label.pack(anchor=tk.W)
 
         examples = [
@@ -27,16 +33,16 @@ class StarbucksRegexApp:
             "グランデ チャイ ティー ラテ ホット"
         ]
 
-        self.entry = ttk.Combobox(frame, values=examples, width=70, font=("Helvetica", 14))
+        self.entry = ttk.Combobox(frame, values=examples, width=70, font=(FONT_FAMILY, 14))
         self.entry.pack(pady=10)
         self.entry.insert(0, examples[0])
         self.entry.bind("<Return>", self.evaluate_order)
         self.entry.bind("<<ComboboxSelected>>", self.evaluate_order)
 
-        button = tk.Button(frame, text="判定する", command=self.evaluate_order, font=("Helvetica", 12, "bold"), bg="#00704A", fg="white", padx=10, pady=5)
+        button = tk.Button(frame, text="判定する", command=self.evaluate_order, font=(FONT_FAMILY, 12, "bold"), bg=PRIMARY_COLOR, fg=WHITE, padx=10, pady=5)
         button.pack(pady=10)
 
-        self.result_label = tk.Label(frame, text="", justify=tk.LEFT, font=("Helvetica", 11), bg="#ffffff", anchor="nw", relief=tk.SOLID, bd=1, padx=10, pady=10)
+        self.result_label = tk.Label(frame, text="", justify=tk.LEFT, font=(FONT_FAMILY, 11), bg=WHITE, anchor="nw", relief=tk.SOLID, bd=1, padx=10, pady=10)
         self.result_label.pack(expand=True, fill=tk.BOTH, pady=10)
 
     def evaluate_order(self, event=None):
