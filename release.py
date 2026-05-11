@@ -26,12 +26,10 @@ class ReleasePackager:
         return version
 
     def _get_missing_files(self) -> list[str]:
-        missing_files = []
-        for f in self.files_to_include:
-            target_path = os.path.join(self.script_dir, f)
-            if not os.path.exists(target_path):
-                missing_files.append(f)
-        return missing_files
+        return [
+            f for f in self.files_to_include
+            if not os.path.exists(os.path.join(self.script_dir, f))
+        ]
 
     def _create_zip(self, version: str) -> None:
         zip_filename = f"starbucks_regex_{version}.zip"
