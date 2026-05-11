@@ -28,6 +28,16 @@ def test_evaluate_order_empty(mock_showwarning, app):
     mock_showwarning.assert_called_once_with("警告", "注文内容を入力してください。")
     assert app.result_label.cget("text") == ""
 
+@patch("app.messagebox.showwarning")
+def test_evaluate_order_whitespace(mock_showwarning, app):
+    """異常系：注文内容が半角スペースのみの場合、警告が表示されることのテスト"""
+    app.entry.delete(0, tk.END)
+    app.entry.insert(0, "   ")
+    app.evaluate_order()
+
+    mock_showwarning.assert_called_once_with("警告", "注文内容を入力してください。")
+    assert app.result_label.cget("text") == ""
+
 def test_evaluate_order_full_match(app):
     """正常系：完全一致する注文のテスト"""
     app.entry.delete(0, tk.END)
