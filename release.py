@@ -2,6 +2,9 @@ import zipfile
 import os
 import re
 
+# バージョン番号のバリデーション用正規表現 (英数字、ドット、ハイフンのみを許可)
+VERSION_PATTERN = re.compile(r"^[a-zA-Z0-9.-]+$")
+
 class ReleasePackager:
     def __init__(self):
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,7 +23,7 @@ class ReleasePackager:
 
         # セキュリティ対策: バージョン番号のバリデーション (パス・トラバーサル対策)
         # 英数字、ドット、ハイフンのみを許可する
-        if not re.match(r"^[a-zA-Z0-9.-]+$", version):
+        if not VERSION_PATTERN.match(version):
             print("エラー: 不正なバージョン番号です。英数字、ドット(.)、ハイフン(-)のみ使用できます。")
             return None
         return version
