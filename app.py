@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-from starbucks_regex import match_drink_order, extract_drink_order, get_drink_order_match
+from starbucks_regex import get_drink_order_match
 
 # UI Constants
 BG_COLOR = "#f2f0eb"
