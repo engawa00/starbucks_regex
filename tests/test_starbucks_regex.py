@@ -149,6 +149,10 @@ def test_extract_drink_order():
     text2 = "ベンティ ダークモカチップフラペチーノ 最高"
     assert extract_drink_order(text2) == "ベンティ ダークモカチップフラペチーノ"
     
+    # 複数注文が含まれる場合（最初に見つかったものを抽出）
+    text3 = "私は トール スターバックス ラテ ホット と グランデ カフェ モカ アイス を注文しました"
+    assert extract_drink_order(text3) == "トール スターバックス ラテ ホット"
+
     # 該当なしの場合
     text4 = "今日は家で麦茶を飲んでいます"
     assert extract_drink_order(text4) is None
