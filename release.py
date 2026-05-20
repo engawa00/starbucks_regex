@@ -1,6 +1,7 @@
 import zipfile
 import os
 import re
+import argparse
 
 # バージョン番号のバリデーション用正規表現 (英数字、ドット、ハイフンのみを許可)
 VERSION_PATTERN = re.compile(r"^[a-zA-Z0-9.-]+$")
@@ -15,8 +16,10 @@ class ReleasePackager:
             "README.md"
         ]
 
-    def _get_version(self) -> str | None:
-        version = input("バージョン番号を入力してください (例: 0.2.3): ").strip()
+    def _get_version(self, version: str | None = None) -> str | None:
+        if version is None:
+            version = input("バージョン番号を入力してください (例: 0.2.3): ").strip()
+
         if not version:
             print("エラー: バージョン番号が入力されませんでした。")
             return None
@@ -53,9 +56,9 @@ class ReleasePackager:
         except Exception as e:
             print(f"\nエラー: ZIPファイルの作成中にエラーが発生しました: {e}")
 
-    def run(self) -> None:
+    def run(self, version: str | None = None) -> None:
         print("リリース用ZIPファイルを作成します。")
-        version = self._get_version()
+        version = self._get_version(version)
         if not version:
             return
 
@@ -67,9 +70,18 @@ class ReleasePackager:
 
         self._create_zip(version)
 
-def create_release_zip() -> None:
-    ReleasePackager().run()
+def create_release_zip(version: str | None = None) -> None:
+    ReleasePackager().run(version)
 
 if __name__ == "__main__":
-    create_release_zip()
-    input("\n終了するには何かキーを押してください...")
+    parser = argparse.ArgumentParser(description="Create a release ZIP file.")
+    parser.add_argument(
+        "--version",
+        "-v",
+        type=str,
+        help="The version number for the release (e.g., 0.2.3). If not provided, you will be prompted.",
+        default=None
+    )
+    args = parser.parse_args()
+
+    create_release_zip(args.version)
