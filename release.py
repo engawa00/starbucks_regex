@@ -5,15 +5,17 @@ import re
 # バージョン番号のバリデーション用正規表現 (英数字、ドット、ハイフンのみを許可)
 VERSION_PATTERN = re.compile(r"^[a-zA-Z0-9.-]+$")
 
+FILES_TO_INCLUDE = [
+    "app.py",
+    "starbucks_regex.py",
+    "LICENSE",
+    "README.md"
+]
+
 class ReleasePackager:
     def __init__(self):
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
-        self.files_to_include = [
-            "app.py",
-            "starbucks_regex.py",
-            "LICENSE",
-            "README.md"
-        ]
+        self.files_to_include = FILES_TO_INCLUDE
 
     def _get_version(self) -> str | None:
         version = input("バージョン番号を入力してください (例: 0.2.3): ").strip()
