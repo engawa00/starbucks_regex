@@ -1,53 +1,48 @@
 import pytest
-from unittest.mock import patch
-import os
 import zipfile
+from unittest.mock import MagicMock
 import release
 
-@patch('builtins.input')
-def test_create_release_zip(mock_input):
+def test_create_release_zip(monkeypatch, tmp_path):
     # Setup test variables
     test_version = "test-0.0.1"
-    mock_input.return_value = test_version
+    monkeypatch.setattr('builtins.input', lambda *args, **kwargs: test_version)
 
-    script_dir = os.path.dirname(os.path.abspath(release.__file__))
-    expected_zip_path = os.path.join(script_dir, f"starbucks_regex_{test_version}.zip")
+    # Use tmp_path to avoid modifying the real file system
+    monkeypatch.setattr(release, '__file__', str(tmp_path / "release.py"))
 
-    # Ensure the zip file doesn't exist before the test
-    if os.path.exists(expected_zip_path):
-        os.remove(expected_zip_path)
+    # Create dummy files so the release packager thinks they exist
+    for f in release.FILES_TO_INCLUDE:
+        (tmp_path / f).write_text(f"dummy content for {f}")
 
-    try:
-        # Run the target function
-        release.create_release_zip()
+    expected_zip_path = tmp_path / f"starbucks_regex_{test_version}.zip"
 
-        # Verify the ZIP file was created in the correct location
-        assert os.path.exists(expected_zip_path), f"Expected ZIP file at {expected_zip_path} was not found"
+    # Run the target function
+    release.create_release_zip()
 
-        # Verify the ZIP file contents
-        with zipfile.ZipFile(expected_zip_path, 'r') as zipf:
-            zip_contents = zipf.namelist()
-            assert "app.py" in zip_contents
-            assert "starbucks_regex.py" in zip_contents
-            assert "LICENSE" in zip_contents
-            assert "README.md" in zip_contents
-            assert len(zip_contents) == 4 # Ensure exactly 4 files are included
+    # Verify the ZIP file was created in the correct location
+    assert expected_zip_path.exists(), f"Expected ZIP file at {expected_zip_path} was not found"
 
-    finally:
-        # Teardown: Clean up the generated ZIP file
-        if os.path.exists(expected_zip_path):
-            os.remove(expected_zip_path)
+    # Verify the ZIP file contents
+    with zipfile.ZipFile(expected_zip_path, 'r') as zipf:
+        zip_contents = zipf.namelist()
+        assert "app.py" in zip_contents
+        assert "starbucks_regex.py" in zip_contents
+        assert "LICENSE" in zip_contents
+        assert "README.md" in zip_contents
+        assert len(zip_contents) == 4 # Ensure exactly 4 files are included
 
-@patch('builtins.input')
-@patch('builtins.print')
-def test_create_release_zip_invalid_version(mock_print, mock_input):
+def test_create_release_zip_invalid_version(monkeypatch, tmp_path):
     # ../1.0 is invalid due to path traversal characters
     test_version = "../1.0"
-    mock_input.return_value = test_version
+    monkeypatch.setattr('builtins.input', lambda *args, **kwargs: test_version)
 
-    # Before running, count zip files in the script directory
-    script_dir = os.path.dirname(os.path.abspath(release.__file__))
-    zip_files_before = [f for f in os.listdir(script_dir) if f.endswith(".zip")]
+    # Mock print to verify it gets called
+    mock_print = MagicMock()
+    monkeypatch.setattr('builtins.print', mock_print)
+
+    monkeypatch.setattr(release, '__file__', str(tmp_path / "release.py"))
+    zip_files_before = list(tmp_path.glob("*.zip"))
 
     release.create_release_zip()
 
@@ -55,35 +50,34 @@ def test_create_release_zip_invalid_version(mock_print, mock_input):
     mock_print.assert_any_call("エラー: 不正なバージョン番号です。英数字、ドット(.)、ハイフン(-)のみ使用できます。")
 
     # Verify no new ZIP files were created
-    zip_files_after = [f for f in os.listdir(script_dir) if f.endswith(".zip")]
+    zip_files_after = list(tmp_path.glob("*.zip"))
     assert len(zip_files_before) == len(zip_files_after)
 
 @pytest.mark.parametrize("empty_val", ["", "   ", "\t", "\n"])
-@patch('builtins.input')
-@patch('builtins.print')
-def test_create_release_zip_empty_version(mock_print, mock_input, empty_val):
+def test_create_release_zip_empty_version(monkeypatch, empty_val):
     # Empty string should be handled
-    mock_input.return_value = empty_val
+    monkeypatch.setattr('builtins.input', lambda *args, **kwargs: empty_val)
+
+    mock_print = MagicMock()
+    monkeypatch.setattr('builtins.print', mock_print)
 
     release.create_release_zip()
 
     # Check for error message
     mock_print.assert_any_call("エラー: バージョン番号が入力されませんでした。")
 
+def test_create_release_zip_missing_files(monkeypatch, tmp_path):
+    monkeypatch.setattr('builtins.input', lambda *args, **kwargs: "0.0.1")
 
-@patch('builtins.input')
-@patch('builtins.print')
-@patch('os.path.exists')
-def test_create_release_zip_missing_files(mock_exists, mock_print, mock_input):
-    mock_input.return_value = "0.0.1"
+    mock_print = MagicMock()
+    monkeypatch.setattr('builtins.print', mock_print)
 
-    # Mock os.path.exists to return False for 'LICENSE' to trigger missing files error
-    def exists_side_effect(path):
-        if 'LICENSE' in path:
-            return False
-        return True
+    monkeypatch.setattr(release, '__file__', str(tmp_path / "release.py"))
 
-    mock_exists.side_effect = exists_side_effect
+    # Create all but 'LICENSE'
+    for f in release.FILES_TO_INCLUDE:
+        if f != 'LICENSE':
+            (tmp_path / f).write_text(f"dummy content for {f}")
 
     release.create_release_zip()
 
@@ -91,35 +85,41 @@ def test_create_release_zip_missing_files(mock_exists, mock_print, mock_input):
     mock_print.assert_any_call("エラー: 以下の必須ファイルが見つかりません: LICENSE")
     mock_print.assert_any_call("リリース用ZIPの作成を中止します。")
 
+def test_create_release_zip_exception(monkeypatch, tmp_path):
+    monkeypatch.setattr('builtins.input', lambda *args, **kwargs: "0.0.1")
 
-@patch('builtins.input')
-@patch('builtins.print')
-@patch('zipfile.ZipFile')
-def test_create_release_zip_exception(mock_zipfile, mock_print, mock_input):
-    mock_input.return_value = "0.0.1"
+    mock_print = MagicMock()
+    monkeypatch.setattr('builtins.print', mock_print)
+
+    monkeypatch.setattr(release, '__file__', str(tmp_path / "release.py"))
+
+    # Create dummy files
+    for f in release.FILES_TO_INCLUDE:
+        (tmp_path / f).write_text(f"dummy content for {f}")
 
     # Force an exception when creating the zip file
-    mock_zipfile.side_effect = Exception("Test Exception")
+    def raise_exception(*args, **kwargs):
+        raise Exception("Test Exception")
+
+    monkeypatch.setattr(zipfile, 'ZipFile', raise_exception)
 
     release.create_release_zip()
 
     # Check for error message
     mock_print.assert_any_call("\nエラー: ZIPファイルの作成中にエラーが発生しました: Test Exception")
 
+def test_create_release_zip_multiple_missing_files(monkeypatch, tmp_path):
+    monkeypatch.setattr('builtins.input', lambda *args, **kwargs: "0.0.1")
 
-@patch('builtins.input')
-@patch('builtins.print')
-@patch('os.path.exists')
-def test_create_release_zip_multiple_missing_files(mock_exists, mock_print, mock_input):
-    mock_input.return_value = "0.0.1"
+    mock_print = MagicMock()
+    monkeypatch.setattr('builtins.print', mock_print)
 
-    # Mock os.path.exists to return False for both 'LICENSE' and 'README.md'
-    def exists_side_effect(path):
-        if 'LICENSE' in path or 'README.md' in path:
-            return False
-        return True
+    monkeypatch.setattr(release, '__file__', str(tmp_path / "release.py"))
 
-    mock_exists.side_effect = exists_side_effect
+    # Create all but 'LICENSE' and 'README.md'
+    for f in release.FILES_TO_INCLUDE:
+        if f not in ['LICENSE', 'README.md']:
+            (tmp_path / f).write_text(f"dummy content for {f}")
 
     release.create_release_zip()
 
