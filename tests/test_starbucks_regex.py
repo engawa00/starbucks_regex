@@ -265,3 +265,16 @@ def test_cli_no_args(capsys, monkeypatch):
 
     captured = capsys.readouterr()
     assert "注文内容を入力してください。" in captured.out
+
+def test_cli_whitespace_args(capsys, monkeypatch):
+    """CLIの異常系のテスト（空白のみの引数）"""
+    import starbucks_regex
+    monkeypatch.setattr("sys.argv", ["starbucks_regex.py", "   "])
+
+    with pytest.raises(SystemExit) as e:
+        starbucks_regex.main()
+
+    assert e.value.code == 1
+
+    captured = capsys.readouterr()
+    assert "注文内容を入力してください。" in captured.out

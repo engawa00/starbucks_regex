@@ -137,7 +137,7 @@ def main():
     )
     args = parser.parse_args()
 
-    if not args.order:
+    if not args.order or not args.order.strip():
         print("注文内容を入力してください。")
         print("使用例:")
         for ex in examples:
