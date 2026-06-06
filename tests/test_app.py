@@ -1,17 +1,6 @@
 import pytest
 import tkinter as tk
 from unittest.mock import patch
-from app import StarbucksRegexApp
-
-@pytest.fixture
-def root():
-    root = tk.Tk()
-    yield root
-    root.destroy()
-
-@pytest.fixture
-def app(root):
-    return StarbucksRegexApp(root)
 
 def test_app_initialization(app):
     """正常系：アプリの初期化が正しく行われることのテスト"""
