@@ -8,6 +8,19 @@ def test_app_initialization(app):
     assert "トール エクストラホイップ ダークモカチップフラペチーノ" in app.entry.get()
     assert app.result_label.cget("text") == ""
 
+def test_app_combobox_values(app):
+    """正常系：Comboboxのドロップダウンリストに正しいサンプルが含まれていることのテスト"""
+    expected_examples = [
+        "トール エクストラホイップ ダークモカチップフラペチーノ",
+        "ショート キャラメルシロップ ホイップ カフェミスト",
+        "ショート リストレット バニラシロップ スターバックスラテ",
+        "エスプレッソショット追加 キャラメルマキアート",
+        "トール ライトシロップ ライトソース キャラメルマキアート アイス",
+        "グランデ チャイ ティー ラテ ホット"
+    ]
+    # ttk.Combobox の values プロパティはタプルで返る場合があるため、リストに変換して比較
+    assert list(app.entry["values"]) == expected_examples
+
 @patch("app.messagebox.showwarning")
 def test_evaluate_order_empty(mock_showwarning, app):
     """異常系：注文内容が空の場合、警告が表示されることのテスト"""
