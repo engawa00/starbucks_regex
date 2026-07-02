@@ -1,6 +1,7 @@
+import ast
 import pytest
 import tkinter as tk
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 def test_app_initialization(app):
     """正常系：アプリの初期化が正しく行われることのテスト"""
@@ -72,3 +73,34 @@ def test_evaluate_order_no_match(app):
     result_text = app.result_label.cget("text")
     assert "判定: ✕ マッチしませんでした。" in result_text
     assert "グループ" not in result_text
+
+
+def test_main_block():
+    """正常系：__main__ブロックでアプリが正常に起動し、mainloopが呼ばれることのテスト"""
+    with open("app.py", "r", encoding="utf-8") as f:
+        tree = ast.parse(f.read())
+
+    main_block = None
+    for node in tree.body:
+        if isinstance(node, ast.If):
+            try:
+                if node.test.left.id == '__name__' and node.test.comparators[0].value == '__main__':
+                    main_block = node.body
+            except AttributeError:
+                pass
+
+    assert main_block is not None, "__main__ block not found"
+
+    import app
+
+    with patch.object(app, "tk") as mock_tk, patch.object(app, "StarbucksRegexApp") as mock_app_class:
+        mock_root = MagicMock()
+        mock_tk.Tk.return_value = mock_root
+
+        # main_blockのみをコンパイルして実行
+        code = compile(ast.Module(body=main_block, type_ignores=[]), filename="app.py", mode="exec")
+        exec(code, app.__dict__)
+
+        mock_tk.Tk.assert_called_once()
+        mock_app_class.assert_called_once_with(mock_root)
+        mock_root.mainloop.assert_called_once()
