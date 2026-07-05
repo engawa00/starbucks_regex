@@ -17,6 +17,7 @@ class ReleasePackager:
     def __init__(self):
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
         self.files_to_include = FILES_TO_INCLUDE
+        self._file_paths = {f: os.path.join(self.script_dir, f) for f in self.files_to_include}
 
     def _get_version(self, version: str | None = None) -> str | None:
         if version is None:
@@ -36,7 +37,7 @@ class ReleasePackager:
     def _get_missing_files(self) -> list[str]:
         return [
             f for f in self.files_to_include
-            if not os.path.exists(os.path.join(self.script_dir, f))
+            if not os.path.exists(self._file_paths[f])
         ]
 
     def _create_zip(self, version: str) -> None:
