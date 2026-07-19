@@ -126,3 +126,16 @@ def test_create_release_zip_multiple_missing_files(monkeypatch, tmp_path):
     # Check for error message that includes both missing files
     mock_print.assert_any_call("エラー: 以下の必須ファイルが見つかりません: LICENSE, README.md")
     mock_print.assert_any_call("リリース用ZIPの作成を中止します。")
+
+
+def test_main():
+    """正常系：main関数が正しく動作し、create_release_zip が呼ばれることのテスト"""
+    import sys
+    from unittest.mock import patch
+
+    with patch.object(sys, "argv", ["release.py", "--version", "1.2.3"]), \
+         patch.object(release, "create_release_zip") as mock_create:
+
+        release.main()
+
+        mock_create.assert_called_once_with("1.2.3")

@@ -76,7 +76,7 @@ class ReleasePackager:
 def create_release_zip(version: str | None = None) -> None:
     ReleasePackager().run(version)
 
-if __name__ == "__main__":
+def main() -> None:
     parser = argparse.ArgumentParser(description="Create a release ZIP file.")
     parser.add_argument(
         "--version",
@@ -88,3 +88,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     create_release_zip(args.version)
+
+if __name__ == "__main__":
+    main()
