@@ -96,7 +96,7 @@ def extract_drink_order(order_str: str) -> str | None:
     Returns:
         str | None: マッチした部分文字列。見つからない場合は None
     """
-    match = _compiled_regex.search(order_str)
+    match = get_drink_order_match(order_str)
     if match:
         return match.group(0).strip()
     return None
