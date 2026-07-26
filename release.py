@@ -52,7 +52,7 @@ class ReleasePackager:
         try:
             with zipfile.ZipFile(zip_filepath, 'w', zipfile.ZIP_DEFLATED) as zipf:
                 for f in self.files_to_include:
-                    target_path = os.path.join(self.script_dir, f)
+                    target_path = self._file_paths[f]
                     # ZIP内のパスはファイル名だけにする
                     zipf.write(target_path, arcname=f)
             print(f"\n成功: {zip_filepath} を作成しました。")
