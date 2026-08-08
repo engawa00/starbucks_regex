@@ -137,14 +137,14 @@ def main():
     )
     args = parser.parse_args()
 
-    if not args.order or not args.order.strip():
+    order_str = args.order.strip() if args.order else ""
+    if not order_str:
         print("注文内容を入力してください。")
         print("使用例:")
         for ex in examples:
             print(f"  python starbucks_regex.py '{ex}'")
         sys.exit(1)
 
-    order_str = args.order.strip()
     match = get_drink_order_match(order_str)
 
     print(f"入力文字列: {order_str}")
