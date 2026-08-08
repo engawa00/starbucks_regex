@@ -4,7 +4,7 @@ import re
 import argparse
 
 # バージョン番号のバリデーション用正規表現 (英数字、ドット、ハイフンのみを許可)
-VERSION_PATTERN = re.compile(r"^[a-zA-Z0-9.-]+$")
+VERSION_PATTERN = re.compile(r"\A[a-zA-Z0-9.-]+\Z")
 
 FILES_TO_INCLUDE = [
     "app.py",
@@ -29,7 +29,7 @@ class ReleasePackager:
 
         # セキュリティ対策: バージョン番号のバリデーション (パス・トラバーサル対策)
         # 英数字、ドット、ハイフンのみを許可する
-        if not VERSION_PATTERN.match(version):
+        if not VERSION_PATTERN.fullmatch(version):
             print("エラー: 不正なバージョン番号です。英数字、ドット(.)、ハイフン(-)のみ使用できます。")
             return None
         return version
