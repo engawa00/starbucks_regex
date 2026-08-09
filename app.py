@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-from starbucks_regex import get_drink_order_match
+from starbucks_regex import get_drink_order_match, EXAMPLES
 
 # UI Constants
 BG_COLOR = "#f2f0eb"
@@ -24,18 +24,9 @@ class StarbucksRegexApp:
         entry_label = tk.Label(frame, text="注文内容を入力、またはリストから選択:", font=(FONT_FAMILY, 10), bg=BG_COLOR)
         entry_label.pack(anchor=tk.W)
 
-        examples = [
-            "トール エクストラホイップ ダークモカチップフラペチーノ",
-            "ショート キャラメルシロップ ホイップ カフェミスト",
-            "ショート リストレット バニラシロップ スターバックスラテ",
-            "エスプレッソショット追加 キャラメルマキアート",
-            "トール ライトシロップ ライトソース キャラメルマキアート アイス",
-            "グランデ チャイ ティー ラテ ホット"
-        ]
-
-        self.entry = ttk.Combobox(frame, values=examples, width=70, font=(FONT_FAMILY, 14))
+        self.entry = ttk.Combobox(frame, values=EXAMPLES, width=70, font=(FONT_FAMILY, 14))
         self.entry.pack(pady=10)
-        self.entry.insert(0, examples[0])
+        self.entry.insert(0, EXAMPLES[0])
         self.entry.bind("<Return>", self.evaluate_order)
         self.entry.bind("<<ComboboxSelected>>", self.evaluate_order)
 
