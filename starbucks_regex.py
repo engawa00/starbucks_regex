@@ -70,6 +70,15 @@ STARBUCKS_JP_DRINK_MENU_REGEX = (
 
 _compiled_regex = re.compile(STARBUCKS_JP_DRINK_MENU_REGEX)
 
+EXAMPLES = [
+    "トール エクストラホイップ ダークモカチップフラペチーノ",
+    "ショート キャラメルシロップ ホイップ カフェミスト",
+    "ショート リストレット バニラシロップ スターバックスラテ",
+    "エスプレッソショット追加 キャラメルマキアート",
+    "トール ライトシロップ ライトソース キャラメルマキアート アイス",
+    "グランデ チャイ ティー ラテ ホット"
+]
+
 def match_drink_order(order_str: str) -> bool:
     """
     指定された注文文字列が、日本のスターバックスのドリンクメニュー（カスタマイズ含む）として
@@ -119,15 +128,7 @@ def main():
         description="Starbucks(JP) Drink Menu Regex Checker CLI",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    examples = [
-        "トール エクストラホイップ ダークモカチップフラペチーノ",
-        "ショート キャラメルシロップ ホイップ カフェミスト",
-        "ショート リストレット バニラシロップ スターバックスラテ",
-        "エスプレッソショット追加 キャラメルマキアート",
-        "トール ライトシロップ ライトソース キャラメルマキアート アイス",
-        "グランデ チャイ ティー ラテ ホット"
-    ]
-    examples_str = "\n".join(f"  '{ex}'" for ex in examples)
+    examples_str = "\n".join(f"  '{ex}'" for ex in EXAMPLES)
 
     parser.add_argument(
         "order",
@@ -141,7 +142,7 @@ def main():
     if not order_str:
         print("注文内容を入力してください。")
         print("使用例:")
-        for ex in examples:
+        for ex in EXAMPLES:
             print(f"  python starbucks_regex.py '{ex}'")
         sys.exit(1)
 
